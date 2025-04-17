@@ -1,0 +1,504 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome - Online Tourist Guide{% endblock %}
+
+{% block content %}
+<style>
+    .hero-landing {
+        background: linear-gradient(135deg, #2c3e50, #3498db);
+        color: white;
+        text-align: center;
+        padding: 100px 20px;
+        border-radius: 15px;
+        margin-bottom: 40px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-landing::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80');
+        background-size: cover;
+        background-position: center;
+        opacity: 0.2;
+        z-index: 0;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero-landing h1 {
+        font-size: 3.5em;
+        margin: 0;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        color:white;
+    }
+
+    .hero-landing p {
+        font-size: 1.5em;
+        margin-top: 15px;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .btn-primary {
+        display: inline-block;
+        padding: 15px 35px;
+        margin-top: 30px;
+        background: linear-gradient(135deg, #3498db, #8e44ad);
+        color: white;
+        text-decoration: none;
+        font-size: 1.3em;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .main-content {
+        max-width: 1200px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    .section {
+        background: white;
+        padding: 30px;
+        margin: 40px 0;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+    }
+
+    .section:hover {
+        transform: translateY(-5px);
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        border-bottom: 2px solid #f0f0f0;
+        padding-bottom: 15px;
+    }
+
+    .section-header h2 {
+        margin: 0;
+        color: #2c3e50;
+        font-size: 2em;
+    }
+
+    .view-all {
+        color: #3498db;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+
+    .view-all:hover {
+        color: #2980b9;
+    }
+
+    .items-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 25px;
+    }
+
+    .item-card {
+        background: #f9f9f9;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+    }
+
+    .item-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .item-image {
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .item-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s;
+    }
+
+    .item-card:hover .item-image img {
+        transform: scale(1.05);
+    }
+
+    .item-content {
+        padding: 20px;
+    }
+
+    .item-title {
+        font-size: 1.3em;
+        margin: 0 0 10px 0;
+        color: #2c3e50;
+    }
+
+    .item-description {
+        color: #555;
+        margin-bottom: 15px;
+    }
+
+    .item-meta {
+        display: flex;
+        justify-content: space-between;
+        color: #777;
+        font-size: 0.9em;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.8em;
+        font-weight: 600;
+    }
+
+    .badge-featured {
+        background-color: #fff8e1;
+        color: #f57f17;
+    }
+
+    .badge-new {
+        background-color: #e8f5e9;
+        color: #388e3c;
+    }
+
+    .center-text {
+        text-align: center;
+        margin: 60px 0;
+    }
+
+    .testimonials {
+        background: linear-gradient(135deg, #f5f7fa, #e4e8eb);
+        padding: 60px 20px;
+        text-align: center;
+        margin: 60px 0;
+        border-radius: 15px;
+    }
+
+    .testimonials h2 {
+        margin-bottom: 40px;
+        color: #2c3e50;
+    }
+
+    .testimonial-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 30px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .testimonial-card {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        text-align: left;
+    }
+
+    .testimonial-text {
+        font-style: italic;
+        margin-bottom: 20px;
+        color: #555;
+    }
+
+    .testimonial-author {
+        display: flex;
+        align-items: center;
+    }
+
+    .author-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 15px;
+    }
+
+    .author-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .author-info h4 {
+        margin: 0;
+        color: #2c3e50;
+    }
+
+    .author-info p {
+        margin: 5px 0 0 0;
+        color: #777;
+        font-size: 0.9em;
+    }
+
+    .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 30px;
+        margin: 60px 0;
+    }
+
+    .feature-card {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.3s;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .feature-icon {
+        font-size: 2.5em;
+        margin-bottom: 15px;
+        color: #3498db;
+    }
+
+    .feature-title {
+        font-size: 1.3em;
+        margin-bottom: 10px;
+        color: #2c3e50;
+    }
+
+    .feature-description {
+        color: #555;
+    }
+
+    @media (max-width: 768px) {
+        .hero-landing h1 {
+            font-size: 2.5em;
+        }
+        
+        .hero-landing p {
+            font-size: 1.2em;
+        }
+        
+        .items-grid, .testimonial-grid, .features {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="hero-landing">
+    <div class="hero-content">
+        <h1>Explore the World with Us</h1>
+        <p>Discover breathtaking destinations, exciting events, and unforgettable experiences tailored just for you.</p>
+        <a href="{% url 'login' %}" class="btn-primary">Start Your Journey</a>
+    </div>
+</div>
+
+<div class="main-content">
+    <!-- Features Section -->
+    <div class="features">
+        <div class="feature-card">
+            <div class="feature-icon">🗺️</div>
+            <h3 class="feature-title">Personalized Itineraries</h3>
+            <p class="feature-description">Get custom travel plans based on your preferences and interests.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🏨</div>
+            <h3 class="feature-title">Exclusive Bookings</h3>
+            <p class="feature-description">Access special rates for hotels, flights, and activities worldwide.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🎭</div>
+            <h3 class="feature-title">Local Events</h3>
+            <p class="feature-description">Discover authentic local experiences and cultural events.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">💬</div>
+            <h3 class="feature-title">Travel Community</h3>
+            <p class="feature-description">Connect with fellow travelers and share your experiences.</p>
+        </div>
+    </div>
+
+    <!-- Popular Destinations Section -->
+    <div class="section">
+        <div class="section-header">
+            <h2>Popular Destinations</h2>
+            <a href="#" class="view-all">View All</a>
+        </div>
+        <div class="items-grid">
+            <div class="item-card">
+                <div class="item-image">
+                    <img src="https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Paris">
+                </div>
+                <div class="item-content">
+                    <span class="badge badge-featured">Featured</span>
+                    <h3 class="item-title">Paris, France</h3>
+                    <p class="item-description">The city of lights, romance, and unparalleled cuisine.</p>
+                    <div class="item-meta">
+                        <span>Best Season: Spring, Fall</span>
+                        <span>⭐ 4.8/5</span>
+                    </div>
+                </div>
+            </div>
+            <div class="item-card">
+                <div class="item-image">
+                    <img src="https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Santorini">
+                </div>
+                <div class="item-content">
+                    <h3 class="item-title">Santorini, Greece</h3>
+                    <p class="item-description">Stunning sunsets and iconic white and blue architecture.</p>
+                    <div class="item-meta">
+                        <span>Best Season: Summer</span>
+                        <span>⭐ 4.9/5</span>
+                    </div>
+                </div>
+            </div>
+            <div class="item-card">
+                <div class="item-image">
+                    <img src="https://images.unsplash.com/photo-1533050487297-09b450131914?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Tokyo">
+                </div>
+                <div class="item-content">
+                    <span class="badge badge-new">New</span>
+                    <h3 class="item-title">Tokyo, Japan</h3>
+                    <p class="item-description">A fascinating blend of traditional culture and modern technology.</p>
+                    <div class="item-meta">
+                        <span>Best Season: Spring, Fall</span>
+                        <span>⭐ 4.7/5</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Events Section -->
+    <div class="section">
+        <div class="section-header">
+            <h2>Upcoming Events</h2>
+            <a href="#" class="view-all">View All</a>
+        </div>
+        <div class="items-grid">
+            <div class="item-card">
+                <div class="item-image">
+                    <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Carnival">
+                </div>
+                <div class="item-content">
+                    <span class="badge badge-featured">Featured</span>
+                    <h3 class="item-title">Rio Carnival</h3>
+                    <p class="item-description">The world's biggest carnival with vibrant parades and samba dancing.</p>
+                    <div class="item-meta">
+                        <span>Rio de Janeiro, Brazil</span>
+                        <span>Feb 25, 2026</span>
+                    </div>
+                </div>
+            </div>
+            <div class="item-card">
+                <div class="item-image">
+                    <img src="https://images.unsplash.com/photo-1518890569493-668df9a00266?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Cherry Blossom">
+                </div>
+                <div class="item-content">
+                    <h3 class="item-title">Cherry Blossom Festival</h3>
+                    <p class="item-description">Experience the magical pink blossoms that symbolize spring.</p>
+                    <div class="item-meta">
+                        <span>Kyoto, Japan</span>
+                        <span>Mar 20, 2026</span>
+                    </div>
+                </div>
+            </div>
+            <div class="item-card">
+                <div class="item-image">
+                    <img src="https://images.unsplash.com/photo-1577985043696-8bd54d9f093f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Oktoberfest">
+                </div>
+                <div class="item-content">
+                    <span class="badge badge-new">New</span>
+                    <h3 class="item-title">Oktoberfest</h3>
+                    <p class="item-description">The world's largest beer festival and traveling funfair.</p>
+                    <div class="item-meta">
+                        <span>Munich, Germany</span>
+                        <span>Sep 19, 2025</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Testimonials Section -->
+    <div class="testimonials">
+        <h2>What Our Travelers Say</h2>
+        <div class="testimonial-grid">
+            <div class="testimonial-card">
+                <p class="testimonial-text">"This platform completely transformed how I plan my trips. The personalized recommendations were spot on, and I discovered amazing hidden gems I would have never found otherwise!"</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">
+                        <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Sarah Johnson">
+                    </div>
+                    <div class="author-info">
+                        <h4>Sarah Johnson</h4>
+                        <p>Adventure Traveler</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <p class="testimonial-text">"The booking process was seamless, and the customer service was exceptional. When my flight got canceled, they helped me find an alternative within minutes!"</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Michael Chen">
+                    </div>
+                    <div class="author-info">
+                        <h4>Michael Chen</h4>
+                        <p>Business Traveler</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <p class="testimonial-text">"As a family of four, planning vacations used to be stressful. This platform made it easy to find family-friendly activities and accommodations that everyone loved!"</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">
+                        <img src="https://randomuser.me/api/portraits/women/42.jpg" alt="Lisa Rodriguez">
+                    </div>
+                    <div class="author-info">
+                        <h4>Lisa Rodriguez</h4>
+                        <p>Family Traveler</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="center-text">
+        <h2>Ready to start your adventure?</h2>
+        <p>Join thousands of travelers who have discovered their perfect destinations with us.</p>
+        <a href="{% url 'register' %}" class="btn-primary">Sign Up Now</a>
+    </div>
+</div>
+
+<script>
+    // This would be replaced with actual Django template variables in a real implementation
+    document.addEventListener("DOMContentLoaded", function() {
+        // Example of showing a notification on page load
+        if (typeof showNotification === 'function') {
+            showNotification("Welcome to our Tourist Guide! Explore destinations and plan your next adventure.", "info");
+        }
+    });
+</script>
+{% endblock %}

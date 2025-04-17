@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>{{ travel_plan.title }}</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Attribute</th>
+            <th>Details</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Destinations:</strong></td>
+            <td>
+                {% for destination in travel_plan.destinations.all %}
+                    {{ destination.name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Start Date:</strong></td>
+            <td>{{ travel_plan.start_date }}</td>
+        </tr>
+        <tr>
+            <td><strong>End Date:</strong></td>
+            <td>{{ travel_plan.end_date }}</td>
+        </tr>
+        <tr>
+            <td><strong>Budget:</strong></td>
+            <td>{{ travel_plan.budget }}</td>
+        </tr>
+        <tr>
+            <td><strong>Notes:</strong></td>
+            <td>{{ travel_plan.notes }}</td>
+        </tr>
+        <tr>
+            <td><strong>Status:</strong></td>
+            <td>{{ travel_plan.get_status_display }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<a href="{% url 'update_travel_plan' travel_plan.id %}" class="button-link">Edit Plan</a> |
+<a href="{% url 'delete_travel_plan' travel_plan.id %}" class="button-link">Delete Plan</a>
+
+{% endblock %}

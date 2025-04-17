@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 style="text-align: center; color: #2c3e50; font-weight: 600; margin-bottom: 30px;">Reviews for {{ destination.name }}</h2>
+
+{% if messages %}
+    <ul class="messages" style="background-color: #f9f9f9; padding: 10px 20px; border-radius: 8px; margin-bottom: 20px;">
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<div class="reviews-container" style="display: flex; flex-direction: column; gap: 20px;">
+    {% for review in reviews %}
+    <div class="review-card" style="border: 1px solid #ddd; padding: 20px; border-radius: 10px; background-color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+        <div class="review-header" style="font-weight: 600; color: #3498db;">
+            <strong>{{ review.user.username }}</strong> rated {{ review.rating }}/5
+        </div>
+        <p style="font-size: 1em; margin-top: 10px;">{{ review.comment }}</p>
+
+        {% if review.review_image %}
+        <div class="review-image" style="margin-top: 15px; text-align: center;">
+            <img src="{{ review.review_image.url }}" width="200px" alt="Review image" style="border-radius: 8px;">
+        </div>
+        {% endif %}
+
+        <div class="review-actions" style="margin-top: 20px;">
+            <!-- Like form -->
+            <form method="POST" action="{% url 'like_review' review.id %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="like-btn" style="background-color: #3498db; color: white; border: none; padding: 8px 16px; border-radius: 30px; cursor: pointer; transition: background-color 0.3s;">
+                    Like
+                </button>
+            </form>
+            <span class="like-count" style="font-size: 1em; color: #2c3e50; margin-left: 10px;">{{ review.like_set.count }} Likes</span>
+        </div>
+
+        <!-- Show replies if any -->
+        <div class="replies" style="margin-top: 20px; font-size: 0.95em; color: #34495e;">
+            {% for reply in review.replies.all %}
+                <div class="reply" style="margin-top: 15px; padding: 10px; border-left: 2px solid #3498db; background-color: #f1f1f1; border-radius: 8px;">
+                    <strong>{{ reply.user.username }} replied:</strong>
+                    <p>{{ reply.comment }}</p>
+                </div>
+            {% empty %}
+                <p>No replies yet.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Reply form (displayed to authenticated users) -->
+        {% if request.session.username %}
+            <div class="reply-form" id="reply-form-{{ review.id }}" style="margin-top: 20px; padding: 10px; background-color: #f9f9f9; border-radius: 8px;">
+                <form method="POST" action="{% url 'post_reply' review.id %}">
+                    {% csrf_token %}
+                    {{ reply_form.as_p }}  <!-- Render the reply form fields -->
+                    <button type="submit" style="background-color: #3498db; color: white; padding: 8px 16px; border: none; border-radius: 30px;">Post Reply</button>
+                </form>
+            </div>
+        {% else %}
+            <p>You must be logged in to post a reply.</p>
+        {% endif %}
+    </div>
+    {% empty %}
+        <p style="font-size: 1.2em; color: #2c3e50;">No reviews yet. Be the first to post!</p>
+    {% endfor %}
+</div>
+
+{% if request.session.username %}
+    <h2 style="margin-top: 40px; color: #2c3e50; font-weight: 600;">Post a Review</h2>
+    <form method="POST" enctype="multipart/form-data" class="review-form" style="margin-top: 20px; padding: 20px; border-radius: 10px; border: 1px solid #ddd; background-color: #fff;">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" style="background-color: #3498db; color: white; padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">Submit Review</button>
+    </form>
+{% else %}
+    <p style="color: #2c3e50;">You must be logged in to post a review.</p>
+{% endif %}
+
+{% endblock %}

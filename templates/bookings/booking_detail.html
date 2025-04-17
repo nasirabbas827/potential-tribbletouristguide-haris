@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Booking Details</h2>
+<table>
+    <tr>
+        <th>Booking Type:</th>
+        <td>{{ booking.get_booking_type_display }}</td>
+    </tr>
+    <tr>
+        <th>Provider Name:</th>
+        <td>{{ booking.provider_name }}</td>
+    </tr>
+    <tr>
+        <th>Booking Reference:</th>
+        <td>{{ booking.booking_reference }}</td>
+    </tr>
+    <tr>
+        <th>Start Date:</th>
+        <td>{{ booking.start_date }}</td>
+    </tr>
+    <tr>
+        <th>End Date:</th>
+        <td>{{ booking.end_date }}</td>
+    </tr>
+    <tr>
+        <th>Amount:</th>
+        <td>{{ booking.amount }}</td>
+    </tr>
+    <tr>
+        <th>Status:</th>
+        <td>{{ booking.get_status_display }}</td>
+    </tr>
+    <tr>
+        <th>Notes:</th>
+        <td>{{ booking.notes }}</td>
+    </tr>
+</table>
+<a href="{% url 'update_booking' booking.id %}">Edit Booking</a> |
+<a href="{% url 'delete_booking' booking.id %}">Delete Booking</a>
+{% endblock %}

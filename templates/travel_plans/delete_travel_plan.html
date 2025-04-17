@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Are you sure you want to delete the plan: {{ travel_plan.title }}?</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit">Yes, Delete</button>
+</form>
+
+<a href="{% url 'travel_plans_list' %}">Cancel</a>
+{% endblock %}

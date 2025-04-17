@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Update Profile{% endblock %}
+
+{% block content %}
+<h2 class="text-center">Update Profile</h2>
+
+<form method="post" enctype="multipart/form-data" class="container">
+    {% csrf_token %}
+
+    {% if form.instance.profile_picture %}
+    <div class="text-center mb-3">
+        <p>Current Profile Picture:</p>
+        <img src="{{ form.instance.profile_picture.url }}" alt="Profile Picture" class="rounded-circle" style="max-width: 150px; height: auto;">
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-md-6">
+            {{ form.profile_picture.label_tag }}
+            {{ form.profile_picture }}
+        </div>
+        <div class="col-md-6">
+            {{ form.full_name.label_tag }}
+            {{ form.full_name }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            {{ form.first_name.label_tag }}
+            {{ form.first_name }}
+        </div>
+        <div class="col-md-6">
+            {{ form.last_name.label_tag }}
+            {{ form.last_name }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            {{ form.email.label_tag }}
+            {{ form.email }}
+        </div>
+        <div class="col-md-6">
+            {{ form.gender.label_tag }}
+            {{ form.gender }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            {{ form.age.label_tag }}
+            {{ form.age }}
+        </div>
+        <div class="col-md-6">
+            {{ form.nationality.label_tag }}
+            {{ form.nationality }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            {{ form.city.label_tag }}
+            {{ form.city }}
+        </div>
+        <div class="col-md-6">
+            {{ form.postal_address.label_tag }}
+            {{ form.postal_address }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            {{ form.mobile_no.label_tag }}
+            {{ form.mobile_no }}
+        </div>
+        <div class="col-md-6">
+            {{ form.preferred_travel_season.label_tag }}
+            {{ form.preferred_travel_season }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            {{ form.preferred_travel_type.label_tag }}
+            {{ form.preferred_travel_type }}
+        </div>
+        <div class="col-md-6">
+            {{ form.age_range.label_tag }}
+            {{ form.age_range }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            {{ form.budget_range.label_tag }}
+            {{ form.budget_range }}
+        </div>
+        <div class="col-md-6">
+            {{ form.last_visited_destination.label_tag }}
+            {{ form.last_visited_destination }}
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <button type="submit" class="btn btn-primary">Update Profile</button>
+        <button type="reset" class="btn btn-secondary">Reset</button>
+    </div>
+</form>
+
+{% endblock %}

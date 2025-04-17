@@ -1,0 +1,433 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Online Tourist Guide{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #eef2f3;
+    }
+
+    .main-content {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 20px;
+    }
+    
+    .hero {
+        background: linear-gradient(135deg, #3498db, #8e44ad);
+        color: white;
+        padding: 50px;
+        text-align: center;
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .dashboard-sections {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .section {
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+    }
+
+    .section:hover {
+        transform: translateY(-5px);
+    }
+
+    .item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-top: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .item:last-child {
+        border-bottom: none;
+    }
+
+    .item img {
+        width: 70px;
+        height: 70px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+    .button-link {
+        display: inline-block;
+        background: linear-gradient(135deg, #3498db, #8e44ad);
+        color: white;
+        padding: 10px 15px;
+        border-radius: 5px;
+        text-decoration: none;
+        margin-right: 10px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .button-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .notification-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        width: 300px;
+    }
+
+    .notification {
+        background: white;
+        border-left: 4px solid #3498db;
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        animation: slideIn 0.3s ease-out forwards;
+        position: relative;
+    }
+
+    .notification.success {
+        border-left-color: #2ecc71;
+    }
+
+    .notification.warning {
+        border-left-color: #f39c12;
+    }
+
+    .notification.error {
+        border-left-color: #e74c3c;
+    }
+
+    .notification-close {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        color: #999;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes fadeOut {
+        from {
+            opacity: 1;
+        }
+        to {
+            opacity: 0;
+        }
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .section-header h2 {
+        margin: 0;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .badge-primary {
+        background-color: #e3f2fd;
+        color: #1976d2;
+    }
+
+    .badge-success {
+        background-color: #e8f5e9;
+        color: #388e3c;
+    }
+
+    .badge-warning {
+        background-color: #fff8e1;
+        color: #f57f17;
+    }
+
+    .weather-info {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .weather-icon {
+        font-size: 24px;
+        margin-right: 10px;
+    }
+</style>
+
+<div class="notification-container" id="notification-container">
+    <!-- Notifications will be dynamically inserted here -->
+</div>
+
+<div class="main-content">
+    <div class="hero">
+        <h1>Welcome, {{ username }}!</h1>
+        <p>Explore destinations, events, and activities tailored for you.</p>
+    </div>
+
+    <div style="margin-top: 20px; margin-bottom: 20px;">
+        <a href="{% url 'travel_plans_list' %}" class="button-link">Your Travel Plans</a>
+        <a href="{% url 'bookings_list' %}" class="button-link">Your Bookings</a>
+    </div>
+
+    <div class="dashboard-sections">
+        <!-- User's Travel Plans Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2>Your Travel Plans</h2>
+                <span class="badge badge-primary">{{ travel_plans|length }}</span>
+            </div>
+            {% for travel_plan in travel_plans %}
+                <div class="item">
+                    <div>
+                        <strong>{{ travel_plan.title }}</strong><br>
+                        <small>Start Date: {{ travel_plan.start_date }} | End Date: {{ travel_plan.end_date }}</small><br>
+                        <small>Status: {{ travel_plan.get_status_display }}</small><br>
+                        <small>Budget: {{ travel_plan.budget }}</small><br>
+                        <small>Notes: {{ travel_plan.notes }}</small>
+                    </div>
+                </div>
+            {% empty %}
+                <p>You have no travel plans. <a href="{% url 'create_travel_plan' %}">Create one now!</a></p>
+            {% endfor %}
+        </div>
+
+        <!-- User's Bookings Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2>Your Bookings</h2>
+                <span class="badge badge-success">{{ bookings|length }}</span>
+            </div>
+            {% for booking in bookings %}
+                <div class="item">
+                    <div>
+                        <strong>Booking Type: {{ booking.get_booking_type_display }}</strong><br>
+                        <small>Provider: {{ booking.provider_name }}</small><br>
+                        <small>Booking Reference: {{ booking.booking_reference }}</small><br>
+                        <small>Start Date: {{ booking.start_date }} | End Date: {{ booking.end_date }}</small><br>
+                        <small>Amount: {{ booking.amount }}</small><br>
+                        <small>Status: {{ booking.status }}</small><br>
+                        <small>Notes: {{ booking.notes }}</small>
+                    </div>
+                </div>
+            {% empty %}
+                <p>You have no bookings.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Recommended Events Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2>Recommended Events</h2>
+                <span class="badge badge-warning">Based on your interests</span>
+            </div>
+            {% if recommended_events %}
+                {% for event in recommended_events %}
+                <div class="item">
+                    {% if event.image %}
+                    <img src="{{ event.image.url }}" alt="{{ event.title }}">
+                    {% endif %}
+                    <div>
+                        <strong>{{ event.title }}</strong> - {{ event.description }}<br>
+                        <small>Location: {{ event.location.name }} | Date: {{ event.date }}</small>
+                        <div class="weather-info">
+                            <span class="weather-icon">☀️</span>
+                            <span>{{ event.location.current_weather }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>No events available for your last visited destination.</p>
+            {% endif %}
+        </div>
+
+        <!-- Recommended Activities Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2>Recommended Activities</h2>
+                <span class="badge badge-warning">Based on your interests</span>
+            </div>
+            {% if recommended_activities %}
+                {% for activity in recommended_activities %}
+                <div class="item">
+                    {% if activity.image %}
+                    <img src="{{ activity.image.url }}" alt="{{ activity.title }}">
+                    {% endif %}
+                    <div>
+                        <strong>{{ activity.title }}</strong> - {{ activity.description }}<br>
+                        <small>Event: {{ activity.event.title }}</small>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>No activities available for your last visited destination.</p>
+            {% endif %}
+        </div>
+
+        <!-- Destinations Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2>Popular Destinations</h2>
+                <span class="badge badge-primary">Trending</span>
+            </div>
+            {% for destination in destinations %}
+            <div class="item">
+                {% if destination.image %}
+                <img src="{{ destination.image.url }}" alt="{{ destination.name }}">
+                {% endif %}
+                <div>
+                    <strong>{{ destination.name }}</strong> - {{ destination.description }}<br>
+                    <small>Best Season: {{ destination.best_season }}</small>
+                </div>
+            </div>
+            {% empty %}
+            <p>No destinations available.</p>
+            {% endfor %}
+            <a href="{% url 'all_destinations' %}" class="button-link" style="margin-top: 10px;">View All Destinations</a>
+        </div>
+
+        <!-- Events Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2>Upcoming Events</h2>
+                <span class="badge badge-primary">{{ events|length }}</span>
+            </div>
+            {% for event in events %}
+            <div class="item">
+                {% if event.image %}
+                <img src="{{ event.image.url }}" alt="{{ event.title }}">
+                {% endif %}
+                <div>
+                    <strong>{{ event.title }}</strong> - {{ event.description }}<br>
+                    <small>Location: {{ event.location.name }} | Date: {{ event.date }}</small>
+                </div>
+            </div>
+            {% empty %}
+            <p>No events available.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Activities Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2>Exciting Activities</h2>
+                <span class="badge badge-primary">{{ activities|length }}</span>
+            </div>
+            {% for activity in activities %}
+            <div class="item">
+                {% if activity.image %}
+                <img src="{{ activity.image.url }}" alt="{{ activity.title }}">
+                {% endif %}
+                <div>
+                    <strong>{{ activity.title }}</strong> - {{ activity.description }}<br>
+                    <small>Event: {{ activity.event.title }}</small>
+                </div>
+            </div>
+            {% empty %}
+            <p>No activities available.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Travel Tips Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2>Travel Tips</h2>
+                <span class="badge badge-primary">Useful</span>
+            </div>
+            {% for tip in travel_tips %}
+            <div class="item">
+                <div>
+                    <strong>{{ tip.tip_title }}</strong><br>
+                    {{ tip.tip_content }}
+                </div>
+            </div>
+            {% empty %}
+            <p>No travel tips available.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const notificationContainer = document.getElementById('notification-container');
+        
+        // Function to create and show a notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            
+            const closeBtn = document.createElement('span');
+            closeBtn.className = 'notification-close';
+            closeBtn.innerHTML = '&times;';
+            closeBtn.onclick = function() {
+                notification.style.animation = 'fadeOut 0.3s forwards';
+                setTimeout(() => {
+                    notificationContainer.removeChild(notification);
+                }, 300);
+            };
+            
+            notification.innerHTML = `<div>${message}</div>`;
+            notification.appendChild(closeBtn);
+            
+            notificationContainer.appendChild(notification);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentNode === notificationContainer) {
+                    notification.style.animation = 'fadeOut 0.3s forwards';
+                    setTimeout(() => {
+                        if (notification.parentNode === notificationContainer) {
+                            notificationContainer.removeChild(notification);
+                        }
+                    }, 300);
+                }
+            }, 5000);
+        }
+        
+        // Show notifications from Django
+        {% for notification in notifications %}
+            showNotification("{{ notification.message }}", "{{ notification.type|default:'info' }}");
+        {% endfor %}
+        
+        // Example of how to trigger notifications from JavaScript
+        // showNotification("Welcome to your travel dashboard!", "success");
+    });
+</script>
+{% endblock %}

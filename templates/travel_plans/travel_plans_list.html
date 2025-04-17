@@ -1,0 +1,301 @@
+{% extends "base.html" %}
+
+{% block title %}Your Travel Plans - Online Tourist Guide{% endblock %}
+
+{% block content %}
+<style>
+    .travel-plans-header {
+        background: linear-gradient(135deg, #3498db, #8e44ad);
+        color: white;
+        padding: 40px 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .travel-plans-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80');
+        background-size: cover;
+        background-position: center;
+        opacity: 0.2;
+        z-index: 0;
+    }
+
+    .header-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .plans-container {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        padding: 25px;
+        margin-bottom: 30px;
+    }
+
+    .plans-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin: 20px 0;
+    }
+
+    .plans-table th {
+        background: linear-gradient(135deg,rgb(0, 0, 0),rgb(16, 15, 16));
+        color: white;
+        padding: 15px;
+        text-align: left;
+        font-weight: 600;
+    }
+
+    .plans-table th:first-child {
+        border-top-left-radius: 10px;
+    }
+
+    .plans-table th:last-child {
+        border-top-right-radius: 10px;
+        text-align: center;
+    }
+
+    .plans-table td {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .plans-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .plans-table tr:hover {
+        background-color: #f9f9f9;
+    }
+
+    .plan-title {
+        font-weight: 600;
+        color: #2c3e50;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        transition: color 0.3s;
+    }
+
+    .plan-title:hover {
+        color: #3498db;
+    }
+
+    .plan-icon {
+        margin-right: 10px;
+        font-size: 1.2em;
+    }
+
+    .plan-status {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.8em;
+        font-weight: 600;
+        margin-left: 10px;
+    }
+
+    .status-planning {
+        background-color: #e3f2fd;
+        color: #1976d2;
+    }
+
+    .status-confirmed {
+        background-color: #e8f5e9;
+        color: #388e3c;
+    }
+
+    .status-completed {
+        background-color: #efebe9;
+        color: #5d4037;
+    }
+
+    .status-cancelled {
+        background-color: #ffebee;
+        color: #d32f2f;
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .btn-action {
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 0.9em;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.3s;
+    }
+
+    .btn-view {
+        background-color: #e3f2fd;
+        color: #1976d2;
+    }
+
+    .btn-view:hover {
+        background-color: #bbdefb;
+    }
+
+    .btn-edit {
+        background-color: #e8f5e9;
+        color: #388e3c;
+    }
+
+    .btn-edit:hover {
+        background-color: #c8e6c9;
+    }
+
+    .btn-delete {
+        background-color: #ffebee;
+        color: #d32f2f;
+    }
+
+    .btn-delete:hover {
+        background-color: #ffcdd2;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+    }
+
+    .empty-state-icon {
+        font-size: 4em;
+        color: #bbb;
+        margin-bottom: 20px;
+    }
+
+    .empty-state-text {
+        color: #777;
+        margin-bottom: 30px;
+    }
+
+    .btn-create {
+        display: inline-block;
+        padding: 12px 25px;
+        background: linear-gradient(135deg, #3498db, #8e44ad);
+        color: white;
+        text-decoration: none;
+        border-radius: 30px;
+        font-weight: 600;
+        transition: all 0.3s;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-create:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-create-container {
+        text-align: center;
+        margin: 30px 0;
+    }
+
+    @media (max-width: 768px) {
+        .action-buttons {
+            flex-direction: column;
+        }
+        
+        .plans-table th:nth-child(2), 
+        .plans-table td:nth-child(2) {
+            display: none;
+        }
+    }
+</style>
+
+<div class="main-content">
+    <div class="travel-plans-header">
+        <div class="header-content">
+            <h1>Your Travel Plans</h1>
+            <p>Manage your upcoming trips and adventures</p>
+        </div>
+    </div>
+
+    <div class="plans-container">
+        {% if travel_plans %}
+            <table class="plans-table">
+                <thead>
+                    <tr>
+                        <th>Travel Plan</th>
+                        <th>Details</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for plan in travel_plans %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'travel_plan_detail' plan.id %}" class="plan-title">
+                                    <span class="plan-icon">✈️</span>
+                                    {{ plan.title }}
+                                    {% if plan.status %}
+                                        <span class="plan-status status-{{ plan.status|lower }}">{{ plan.status }}</span>
+                                    {% endif %}
+                                </a>
+                            </td>
+                            <td>
+                                {% if plan.start_date and plan.end_date %}
+                                    <div>{{ plan.start_date }} to {{ plan.end_date }}</div>
+                                {% endif %}
+                                {% if plan.destination %}
+                                    <div>{{ plan.destination }}</div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{% url 'travel_plan_detail' plan.id %}" class="btn-action btn-view">
+                                        <span>👁️</span> View
+                                    </a>
+                                    <a href="{% url 'update_travel_plan' plan.id %}" class="btn-action btn-edit">
+                                        <span>✏️</span> Edit
+                                    </a>
+                                    <a href="{% url 'delete_travel_plan' plan.id %}" class="btn-action btn-delete">
+                                        <span>🗑️</span> Delete
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">🧳</div>
+                <h3>No Travel Plans Yet</h3>
+                <p class="empty-state-text">You haven't created any travel plans. Start planning your next adventure!</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="btn-create-container">
+        <a href="{% url 'create_travel_plan' %}" class="btn-create">
+            <span>➕</span> Create a New Travel Plan
+        </a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Example of showing a notification when the page loads
+        if (typeof showNotification === 'function') {
+            showNotification("Viewing your travel plans. Create a new one or manage existing plans.", "info");
+        }
+    });
+</script>
+{% endblock %}

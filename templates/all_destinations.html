@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}All Destinations - Online Tourist Guide{% endblock %}
+
+{% block content %}
+<style>
+    .destinations-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .destination-card {
+        border: 1px solid #ddd;
+        padding: 20px;
+        border-radius: 12px;
+        background-color: #fff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s;
+    }
+
+    .destination-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .destination-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 15px;
+    }
+
+    .destination-card h3 {
+        color: #2c3e50;
+        font-weight: 600;
+        margin: 15px 0 10px;
+    }
+
+    .destination-card p {
+        font-size: 0.95em;
+        margin-bottom: 10px;
+    }
+
+    .destination-card a.button-link {
+        display: inline-block;
+        padding: 12px 25px;
+        background-color: #3498db;
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        border-radius: 30px;
+        text-align: center;
+        transition: all 0.3s;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .destination-card a.button-link:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+</style>
+
+<h2 style="color: #2c3e50; font-weight: 600; text-align: center; margin-bottom: 30px;">All Destinations</h2>
+
+<div class="destinations-container">
+    {% for destination in destinations %}
+    <div class="destination-card">
+        {% if destination.image %}
+        <img src="{{ destination.image.url }}" alt="{{ destination.name }}">
+        {% endif %}
+        <h3>{{ destination.name }}</h3>
+        <p><strong>Description:</strong> {{ destination.description }}</p>
+        <p><strong>Best Season:</strong> {{ destination.best_season }}</p>
+        <p><strong>Latitude:</strong> {{ destination.latitude }}</p>
+        <p><strong>Longitude:</strong> {{ destination.longitude }}</p>
+        <p><strong>Activities:</strong> {{ destination.activities }}</p>
+
+        <a href="{% url 'destination_reviews' destination.id %}" class="button-link">View / Post Reviews</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
